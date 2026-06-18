@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { ArrowRight, ArrowLeft, Search, Link as LinkIcon, CheckCircle, AlertCircle, Loader2 } from "lucide-react"
+import { runAction } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -34,7 +35,7 @@ export default function ProvisionamentoPage() {
         }
         setIsLoading(true)
         try {
-          const data = await getClienteByEmail(emailInput)
+          const data = await runAction(getClienteByEmail(emailInput))
           if (data && data.id) {
             setCliente(data)
           } else {
@@ -64,10 +65,10 @@ export default function ProvisionamentoPage() {
     } else if (step === 4) {
       setIsLoading(true)
       try {
-        await createSensorSync({
+        await runAction(createSensorSync({
           macAddress: selectedSensor.macAddress,
           sistemaId: selectedSistema.id
-        })
+        }))
         setSuccess(true)
       } catch (err: any) {
         setError(err.message || "Erro ao provisionar o sensor.")
@@ -83,7 +84,7 @@ export default function ProvisionamentoPage() {
     setIsLoading(true)
     setError(null)
     try {
-      const data = await getSensores()
+      const data = await runAction(getSensores())
       const availableSensors = data ? data.filter((s: any) => s.status === "DISPONIVEL") : []
       setSensores(availableSensors)
     } catch (err: any) {

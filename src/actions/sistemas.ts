@@ -40,7 +40,7 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
     if (error instanceof Error && error.name === 'AbortError') {
       throw new Error("O servidor demorou muito para responder. Tente novamente.")
     }
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   } finally {
     clearTimeout(timeoutId)
   }
@@ -51,7 +51,7 @@ export async function getSistemas() {
     return await fetchApi("/sistema")
   } catch (error) {
     console.error("Erro em getSistemas:", error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -60,7 +60,7 @@ export async function getSistemaById(id: string) {
     return await fetchApi(`/sistema/${id}`)
   } catch (error) {
     console.error(`Erro em getSistemaById (${id}):`, error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -72,7 +72,7 @@ export async function updateSistema(data: any) {
     })
   } catch (error) {
     console.error("Erro em updateSistema:", error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -83,7 +83,7 @@ export async function updateSistemaStatus(id: string, status: string) {
     })
   } catch (error) {
     console.error(`Erro em updateSistemaStatus (${id}):`, error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -94,7 +94,7 @@ export async function deleteSistema(id: string) {
     })
   } catch (error) {
     console.error(`Erro em deleteSistema (${id}):`, error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -108,7 +108,7 @@ export async function createSistema(data: any) {
     
   } catch (error) {
     console.error("Erro em createSistema:", error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
   
 }
@@ -118,6 +118,6 @@ export async function getClienteByEmail(email: string) {
     return await fetchApi(`/cliente/email?email=${encodeURIComponent(email)}`)
   } catch (error) {
     console.error(`Erro em getClienteByEmail (${email}):`, error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Search, Filter, Eye, Edit, Trash, X, Sun, AlertCircle } from "lucide-react"
+import { runAction } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -54,7 +55,7 @@ export default function ClientesPage() {
   useEffect(() => {
     const fetchClientes = async () => {
       try {
-        const data = await getClientes()
+        const data = await runAction(getClientes())
         setClientes(data || [])
       } catch (error) {
         console.error("Erro ao carregar clientes", error)
@@ -77,7 +78,7 @@ export default function ClientesPage() {
     setModalError(null)
     
     try {
-      const data = await getClienteById(cliente.id)
+      const data = await runAction(getClienteById(cliente.id))
       setSelectedCliente(data)
     } catch (error: any) {
       setModalError(error.message)
@@ -118,7 +119,7 @@ export default function ClientesPage() {
         telefone: cleanTelefone,
         tipoUser: editForm.tipoUser
       }
-      const updatedData = await updateCliente(payload)
+      const updatedData = await runAction(updateCliente(payload))
       setClientes(clientes.map(c => 
         c.id === selectedCliente.id 
           ? { ...c, nome: updatedData.nome, tipoUser: updatedData.tipoUser, telefone: updatedData.telefone } 
@@ -137,7 +138,7 @@ export default function ClientesPage() {
     setIsActionLoading(true)
     setModalError(null)
     try {
-      await deleteCliente(selectedCliente.email)
+      await runAction(deleteCliente(selectedCliente.email))
       setClientes(clientes.filter(c => c.id !== selectedCliente.id))
       setIsDeleteModalOpen(false)
     } catch (error: any) {

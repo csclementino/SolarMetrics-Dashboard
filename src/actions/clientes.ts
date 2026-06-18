@@ -40,7 +40,7 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
     if (error instanceof Error && error.name === 'AbortError') {
       throw new Error("O servidor demorou muito para responder. Tente novamente.")
     }
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   } finally {
     clearTimeout(timeoutId)
   }
@@ -51,7 +51,7 @@ export async function getClientes() {
     return await fetchApi("/cliente")
   } catch (error) {
     console.error("Erro em getClientes:", error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -60,7 +60,7 @@ export async function getClienteById(id: string) {
     return await fetchApi(`/cliente/${id}`)
   } catch (error) {
     console.error(`Erro em getClienteById (${id}):`, error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -72,7 +72,7 @@ export async function updateCliente(data: any) {
     })
   } catch (error) {
     console.error("Erro em updateCliente:", error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -83,6 +83,6 @@ export async function deleteCliente(email: string) {
     })
   } catch (error) {
     console.error(`Erro em deleteCliente (${email}):`, error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }

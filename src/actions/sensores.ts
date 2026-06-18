@@ -41,7 +41,7 @@ async function fetchApi(endpoint: string, options: RequestInit = {}) {
     if (error instanceof Error && error.name === 'AbortError') {
       throw new Error("O servidor demorou muito para responder. Tente novamente.")
     }
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   } finally {
     clearTimeout(timeoutId)
   }
@@ -52,7 +52,7 @@ export async function getSensores() {
     return await fetchApi("/sensor")
   } catch (error) {
     console.error("Erro em getSensores:", error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -61,7 +61,7 @@ export async function getSensorInfo(macAddress: string) {
     return await fetchApi(`/sensor/info?macAddress=${encodeURIComponent(macAddress)}`)
   } catch (error) {
     console.error(`Erro em getSensorInfo (${macAddress}):`, error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -73,7 +73,7 @@ export async function updateSensorStatus(macAddress: string, status: string) {
     })
   } catch (error) {
     console.error(`Erro em updateSensorStatus (${macAddress}):`, error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -84,7 +84,7 @@ export async function deleteSensor(macAddress: string) {
     })
   } catch (error) {
     console.error(`Erro em deleteSensor (${macAddress}):`, error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -96,7 +96,7 @@ export async function desvincularSensor(sistemaId: string) {
     })
   } catch (error) {
     console.error(`Erro em desvincularSensor (${sistemaId}):`, error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -108,7 +108,7 @@ export async function createSensor(data: { macAddress: string; modelo: string })
     })
   } catch (error) {
     console.error("Erro em createSensor:", error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }
 
@@ -120,6 +120,6 @@ export async function createSensorSync(data: { macAddress: string; sistemaId: st
     })
   } catch (error) {
     console.error("Erro em createSensorSync:", error)
-    throw error
+    return { __error: error instanceof Error ? error.message : String(error) }
   }
 }

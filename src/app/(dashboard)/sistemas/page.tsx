@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Search, Filter, Eye, Edit, Plus, ArrowRight, Trash2, CheckCircle2, AlertCircle, X, AlertTriangle, Ban, Settings } from "lucide-react"
+import { runAction } from "@/lib/utils"
 import { getSistemas, getSistemaById, updateSistema, updateSistemaStatus, deleteSistema, createSistema, getClienteByEmail } from "@/actions/sistemas"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -107,7 +108,7 @@ export default function SistemasPage() {
   useEffect(() => {
     const fetchSistemas = async () => {
       try {
-        const data = await getSistemas()
+        const data = await runAction(getSistemas())
         const mappedSistemas = data.map((sys: any) => ({
           id: sys.id,
           nomeInstalacao: sys.nomeInstalacao,
@@ -135,7 +136,7 @@ export default function SistemasPage() {
     if (clienteEmail.includes('@') && clienteEmail.includes('.')) {
       const delayDebounceFn = setTimeout(async () => {
         try {
-          const cliente = await getClienteByEmail(clienteEmail)
+          const cliente = await runAction(getClienteByEmail(clienteEmail))
           setClienteEncontrado({
              id: cliente.id,
              nome: cliente.nome,
@@ -230,7 +231,7 @@ export default function SistemasPage() {
         paineis: paineisList
       }
 
-      const created = await createSistema(requestData)
+      const created = await runAction(createSistema(requestData))
 
       setSistemas(prev => [...prev, {
         id: created.id,
@@ -266,7 +267,7 @@ export default function SistemasPage() {
     setModalError(null)
     setIsActionLoading(true)
     try {
-      const data = await getSistemaById(sys.id)
+      const data = await runAction(getSistemaById(sys.id))
       setSelectedSistema({
         ...sys,
         cliente: data.cliente?.nome || "Não informado",
@@ -296,7 +297,7 @@ export default function SistemasPage() {
     setModalError(null)
     setIsActionLoading(true)
     try {
-      const data = await getSistemaById(sys.id)
+      const data = await runAction(getSistemaById(sys.id))
       setEditDados({
         nomeInstalacao: data.nomeInstalacao,
         dataInstalacao: data.dataInstalacao,
@@ -377,7 +378,7 @@ export default function SistemasPage() {
         paineis: paineisList
       }
 
-      const updated = await updateSistema(requestData)
+      const updated = await runAction(updateSistema(requestData))
 
       setSistemas(prev => prev.map(s => {
         if (s.id === selectedSistema.id) {
@@ -406,7 +407,7 @@ export default function SistemasPage() {
     setModalError(null)
     setIsActionLoading(true)
     try {
-      await deleteSistema(selectedSistema.id)
+      await runAction(deleteSistema(selectedSistema.id))
       setSistemas(prev => prev.filter(s => s.id !== selectedSistema.id))
       handleCloseActions();
     } catch (error: any) {
@@ -422,7 +423,7 @@ export default function SistemasPage() {
     setIsActionLoading(true)
     try {
       const newStatus = selectedSistema.status === "Ativo" ? "INATIVO" : "ATIVO";
-      const updated = await updateSistemaStatus(selectedSistema.id, newStatus)
+      const updated = await runAction(updateSistemaStatus(selectedSistema.id, newStatus))
       const displayStatus = updated.status === "ATIVO" ? "Ativo" : "Inativo"
       
       setSistemas(prev => prev.map(s => {

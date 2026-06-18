@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Search, Filter, Key, Plus, ArrowRight, Ban, Link2Off, Eye, X, AlertTriangle, Trash2, AlertCircle } from "lucide-react"
+import { runAction } from "@/lib/utils"
 import { getSensores, getSensorInfo, updateSensorStatus, deleteSensor, desvincularSensor, createSensor } from "@/actions/sensores"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -46,7 +47,7 @@ export default function SensoresPage() {
   useEffect(() => {
     const fetchSensores = async () => {
       try {
-        const data = await getSensores()
+        const data = await runAction(getSensores())
         setSensores(data || [])
       } catch (error) {
         console.error("Erro ao carregar sensores", error)
@@ -83,10 +84,10 @@ export default function SensoresPage() {
     setWizardError(null);
     setIsWizardLoading(true);
     try {
-      const result = await createSensor({
+      const result = await runAction(createSensor({
         macAddress: novoSensorMac,
         modelo: novoSensorModelo
-      });
+      }));
       
       setDeviceSecret(result.deviceSecret);
       setSensores(prev => [...prev, {
@@ -110,7 +111,7 @@ export default function SensoresPage() {
     setModalError(null)
     setIsActionLoading(true)
     try {
-      const data = await getSensorInfo(sensor.macAddress)
+      const data = await runAction(getSensorInfo(sensor.macAddress))
       setSelectedSensor({
         ...sensor,
         conexaoBroker: data.conexaoBroker,
@@ -135,7 +136,7 @@ export default function SensoresPage() {
     setModalError(null);
     setIsActionLoading(true);
     try {
-      await desvincularSensor(selectedSensor.sistemaId);
+      await runAction(desvincularSensor(selectedSensor.sistemaId));
       setSensores(prev => prev.map(s => s.macAddress === selectedSensor.macAddress ? { ...s, status: "DISPONIVEL" } : s));
       setSelectedSensor({ ...selectedSensor, status: "DISPONIVEL", sistemaId: null });
       setConfirmAction(null);
@@ -152,7 +153,7 @@ export default function SensoresPage() {
     setModalError(null);
     setIsActionLoading(true);
     try {
-      await deleteSensor(selectedSensor.macAddress);
+      await runAction(deleteSensor(selectedSensor.macAddress));
       setSensores(prev => prev.filter(s => s.macAddress !== selectedSensor.macAddress));
       handleCloseDetails();
     } catch (error: any) {
@@ -175,7 +176,7 @@ export default function SensoresPage() {
     setModalError(null);
     setIsActionLoading(true);
     try {
-      const updated = await updateSensorStatus(selectedSensor.macAddress, newStatus);
+      const updated = await runAction(updateSensorStatus(selectedSensor.macAddress, newStatus));
       const resultingStatus = updated?.status || newStatus;
       setSensores(prev => prev.map(s => s.macAddress === selectedSensor.macAddress ? { ...s, status: resultingStatus } : s));
       setSelectedSensor({ ...selectedSensor, status: resultingStatus });

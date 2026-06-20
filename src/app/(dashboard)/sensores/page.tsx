@@ -1,21 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Search, Filter, Key, Plus, ArrowRight, Ban, Link2Off, Eye, X, AlertTriangle, Trash2, AlertCircle } from "lucide-react"
+import { Search, Filter, Key, Plus, ArrowRight, Ban, Link2Off, Eye, X, AlertTriangle, Trash2, AlertCircle, Radio } from "lucide-react"
 import { runAction } from "@/lib/utils"
 import { getSensores, getSensorInfo, updateSensorStatus, deleteSensor, desvincularSensor, createSensor } from "@/actions/sensores"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 
 export type Sensor = {
   macAddress: string;
@@ -293,46 +285,35 @@ export default function SensoresPage() {
           </Button>
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>MAC Address</TableHead>
-              <TableHead>Modelo</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-text-secondary">
-                  Carregando sensores...
-                </TableCell>
-              </TableRow>
-            ) : filtered.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-text-secondary">
-                  Nenhum sensor encontrado.
-                </TableCell>
-              </TableRow>
-            ) : filtered.map((sensor) => (
-              <TableRow key={sensor.macAddress}>
-                <TableCell className="font-mono text-sm">{sensor.macAddress}</TableCell>
-                <TableCell>{sensor.modelo}</TableCell>
-                <TableCell>
+        {isLoading ? (
+          <div className="text-center py-12 text-text-muted">Carregando sensores...</div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-12 text-text-muted">Nenhum sensor encontrado.</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {filtered.map((sensor) => (
+              <div key={sensor.macAddress} className="flex flex-col p-5 bg-surface-page border border-surface-section rounded-xl hover:border-action-primary/50 transition-colors">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="h-10 w-10 rounded-full bg-surface-section flex items-center justify-center flex-shrink-0">
+                    <Radio className="h-5 w-5 text-text-secondary" />
+                  </div>
                   <Badge variant={getStatusVariant(sensor.status)}>
                     {formatStatusName(sensor.status)}
                   </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button variant="outline" size="sm" onClick={() => handleOpenDetails(sensor)}>
-                    <Eye className="mr-2 h-4 w-4" /> Ver detalhes
+                </div>
+                <div className="mb-4">
+                  <h3 className="font-mono font-bold text-base text-text-primary">{sensor.macAddress}</h3>
+                  <p className="text-sm text-text-secondary mt-1">Modelo: {sensor.modelo}</p>
+                </div>
+                <div className="mt-auto pt-4 border-t border-surface-section/60">
+                  <Button variant="ghost" size="sm" className="w-full text-action-primary hover:text-action-primary hover:bg-action-primary/10" onClick={() => handleOpenDetails(sensor)}>
+                    <Eye className="mr-2 h-4 w-4" /> Detalhes do Sensor
                   </Button>
-                </TableCell>
-              </TableRow>
+                </div>
+              </div>
             ))}
-          </TableBody>
-        </Table>
+          </div>
+        )}
       </Card>
 
       {/* Details Modal */}

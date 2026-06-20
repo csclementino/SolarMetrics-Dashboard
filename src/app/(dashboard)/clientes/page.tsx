@@ -8,12 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
 } from "@/components/ui/table"
 import { getClientes, getClienteById, updateCliente, deleteCliente } from "@/actions/clientes"
 
@@ -173,52 +167,45 @@ export default function ClientesPage() {
           </Button>
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Nome</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Telefone</TableHead>
-              <TableHead>E-mail</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-text-muted">
-                  Carregando clientes...
-                </TableCell>
-              </TableRow>
-            ) : filteredClientes.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center text-text-muted">
-                  Nenhum cliente encontrado.
-                </TableCell>
-              </TableRow>
-            ) : filteredClientes.map((cliente) => (
-              <TableRow key={cliente.id}>
-                <TableCell className="font-medium">{cliente.nome}</TableCell>
-                <TableCell>{cliente.tipoUser}</TableCell>
-                <TableCell className="text-text-secondary">{cliente.telefone}</TableCell>
-                <TableCell className="text-text-secondary">{cliente.email}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <Button variant="ghost" size="icon" title="Visualizar" onClick={() => handleOpenView(cliente)}>
+        {isLoading ? (
+          <div className="text-center py-12 text-text-muted">Carregando clientes...</div>
+        ) : filteredClientes.length === 0 ? (
+          <div className="text-center py-12 text-text-muted">Nenhum cliente encontrado.</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredClientes.map((cliente) => (
+              <div key={cliente.id} className="bg-surface-page border border-surface-section rounded-xl p-6 hover:shadow-md transition-shadow flex flex-col">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="pr-2">
+                    <h3 className="font-bold text-lg text-text-primary break-words">{cliente.nome}</h3>
+                    <Badge variant="default" className="mt-2 bg-surface-section text-text-secondary">{cliente.tipoUser}</Badge>
+                  </div>
+                  <div className="flex gap-1 bg-surface-section/50 rounded-lg p-1 flex-shrink-0">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Visualizar" onClick={() => handleOpenView(cliente)}>
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" title="Editar" onClick={() => handleOpenEdit(cliente)}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Editar" onClick={() => handleOpenEdit(cliente)}>
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="icon" title="Excluir" className="text-status-error hover:text-status-error" onClick={() => handleOpenDelete(cliente)}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 text-status-error hover:text-status-error hover:bg-status-error/10" title="Excluir" onClick={() => handleOpenDelete(cliente)}>
                       <Trash className="h-4 w-4" />
                     </Button>
                   </div>
-                </TableCell>
-              </TableRow>
+                </div>
+                <div className="mt-auto pt-4 space-y-3 text-sm border-t border-surface-section/50">
+                  <div className="flex justify-between items-center gap-4">
+                    <span className="text-text-muted">E-mail:</span>
+                    <span className="text-text-secondary font-medium truncate" title={cliente.email}>{cliente.email}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-text-muted">Telefone:</span>
+                    <span className="text-text-secondary font-medium">{cliente.telefone}</span>
+                  </div>
+                </div>
+              </div>
             ))}
-          </TableBody>
-        </Table>
+          </div>
+        )}
       </Card>
 
       {/* View Modal */}
